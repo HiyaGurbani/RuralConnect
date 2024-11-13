@@ -21,7 +21,7 @@ const upload = multer({ dest: 'uploads/' });
 const web3 = new Web3('http://localhost:8545'); // Make sure Ganache is running at this port
 
 // Replace with your contract ABI and address
-const contractABI =     [
+const contractABI =  [
   {
     "anonymous": false,
     "inputs": [
@@ -398,7 +398,7 @@ const contractABI =     [
   }
 ];
 
-const contractAddress = '0xBFE8fD30511637f9ceA3E286aAA06A1e9797bC5B';
+const contractAddress = '0x1924B5c37b9fCB0325295d09A3Aab84d7C4c11f3';
 const contract = new web3.eth.Contract(contractABI, contractAddress);
 
 // IPFS Upload Endpoint (Mocked)

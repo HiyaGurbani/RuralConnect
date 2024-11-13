@@ -56,8 +56,8 @@ export default function FreelancingAssistant() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 p-4">
       <Card className="w-full max-w-2xl h-[600px] flex flex-col shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-t-lg">
-          <CardTitle className="text-2xl font-bold text-center">Freelancing Assistant</CardTitle>
+        <CardHeader className="bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-t-lg">
+          <CardTitle className="text-2xl font-bold text-center">Assistant</CardTitle>
         </CardHeader>
         <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
@@ -81,7 +81,7 @@ export default function FreelancingAssistant() {
           <form onSubmit={handleSubmit} className="flex w-full space-x-2">
             <Input
               type="text"
-              placeholder="Ask about freelancing..."
+              placeholder="Ask anything..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               className="flex-grow"

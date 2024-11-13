@@ -51,13 +51,15 @@ contract SkillVerification {
     }
 
     function completeMilestone(address client, uint256 milestoneId) public {
-        Milestone storage milestone = milestones[client][milestoneId];
-        require(!milestone.isCompleted, "Milestone already completed");
-        require(!milestone.isDisputed, "Milestone is disputed");
+    Milestone storage milestone = milestones[client][milestoneId];
+    require(!milestone.isCompleted, "Milestone already completed");
+    require(!milestone.isDisputed, "Milestone is disputed");
+    require(block.timestamp <= milestone.dueDate, "Past due date");
 
-        milestone.isCompleted = true;
-        emit MilestoneCompleted(msg.sender, milestoneId);
-    }
+    milestone.isCompleted = true;
+    emit MilestoneCompleted(msg.sender, milestoneId);
+}
+
 
     function releasePayment(address payable freelancer, uint256 milestoneId) public {
         Milestone storage milestone = milestones[msg.sender][milestoneId];

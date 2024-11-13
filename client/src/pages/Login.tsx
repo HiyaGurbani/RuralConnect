@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';  // Import Firebase auth
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,74 +16,54 @@ const AuthPage = () => {
     name: '',
     email: '',
     password: '',
-    role: 'buyer', // Default role for signup
+    role: 'buyer',
   });
   const [isLoginMode, setIsLoginMode] = useState(true);
 
+  // Handle form field changes
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle form submission
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     setIsLoading(true);
 
-    if (isLoginMode) {
+    if (!isLoginMode) {
       await handleSignup();
-      
     } else {
       await handleLogin();
     }
   };
 
+  // Handle login using Firebase Authentication
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:7000/api/users/login', {
-        email: formData.email,
-        password: formData.password,
-      });
-
+      await signInWithEmailAndPassword(auth, formData.email, formData.password);
       alert('Logged in successfully!');
+      // Redirect based on the role if needed
+      navigator(`/profile/${formData.role}`);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      alert(`Error: ${errorMessage}`);
+      alert(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Handle sign-up using Firebase Authentication
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:7000/api/users/signup', {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-      });
-
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+      
       alert('Account created successfully!');
-      const res = response.data;
-
-      // Conditional navigation based on user role
-      if (formData.role === 'buyer') {
-        navigator(`/profile/client/${res.userId}`);
-      } else if (formData.role === 'rural') {
-        navigator(`/profile/gig/${res.userId}`);
-      } else if (formData.role === 'tourism') {
-        navigator(`/profile/tourism/${res.userId}`);
-      } else if (formData.role === 'user') {
-        navigator(`/profile/gig/${res.userId}`);
-      } else if (formData.role === 'seller') {
-        navigator(`/profile/seller/${res.userId}`);
-      } else if (formData.role === 'guide') {
-        navigator(`/profile/guide/${res.userId}`);
-      } else if (formData.role === 'institute') {
-        navigator(`/profile/institute/${res.userId}`);
-      }
+      // Redirect to the profile page after successful signup based on the role
+      navigator(`/profile/${formData.role}`);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.message;
-      alert(`Error: ${errorMessage}`);
+      alert(`Error: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -216,24 +196,20 @@ const AuthPage = () => {
                   <Label className="text-green-900">Account Role</Label>
                   <RadioGroup
                     defaultValue={formData.role}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, role: value }))}
-                    className="flex"
+                    onValueChange={(value) => setFormData((prev) => ({ ...prev, role: value }))} 
+                    className="flex flex-wrap"
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="buyer" id="buyer" />
                       <Label htmlFor="buyer" className="text-green-900">Traveller</Label>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
-                      <RadioGroupItem value="user" id="user" />
-                      <Label htmlFor="user" className="text-green-900">Guide</Label>
+                      <RadioGroupItem value="guide" id="guide" />
+                      <Label htmlFor="guide" className="text-green-900">Guide</Label>
                     </div>
                     <div className="flex items-center space-x-2 ml-4">
                       <RadioGroupItem value="seller" id="seller" />
-                      <Label htmlFor="seller" className="text-green-900">Institute</Label>
-                    </div>
-                    <div className="flex items-center space-x-2 ml-4">
-                      <RadioGroupItem value="guide" id="guide" />
-                      <Label htmlFor="guide" className="text-green-900">Seller</Label>
+                      <Label htmlFor="seller" className="text-green-900">Seller</Label>
                     </div>
                   </RadioGroup>
                 </div>

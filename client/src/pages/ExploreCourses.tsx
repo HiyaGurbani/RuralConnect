@@ -4,6 +4,9 @@ import { ChevronLeft, Search, BookOpen, Clock, Users } from 'lucide-react';
 import cours1 from '../assets/course1.png';
 import cours2 from '../assets/course2.png';
 import cours3 from '../assets/course3.png';
+import cours4 from '../assets/course4.png';
+import cours5 from '../assets/course5.png';
+import cours6 from '../assets/course6.png';
 const ExploreCourses = () => {
   const navigate = useNavigate();
 
@@ -39,7 +42,7 @@ const ExploreCourses = () => {
       duration: "1 week",
       language: "Malayalam, English",
       enrolled: 2100,
-      image: "/api/placeholder/300/200",
+      image: cours4,
       instructor: "Rajesh Kumar",
       price: 149,
       level: "Beginner"
@@ -63,7 +66,7 @@ const ExploreCourses = () => {
       duration: "1 week",
       language: "Marathi, English",
       enrolled: 670,
-      image: "/api/placeholder/300/200",
+      image: cours5,
       instructor: "Sanjay Patil",
       price: 199,
       level: "Beginner"
@@ -75,7 +78,7 @@ const ExploreCourses = () => {
       duration: "3 weeks",
       language: "Kannada, English",
       enrolled: 1560,
-      image: "/api/placeholder/300/200",
+      image: cours6,
       instructor: "Lakshmi N",
       price: 249,
       level: "Intermediate"
@@ -95,7 +98,7 @@ const ExploreCourses = () => {
       <nav className="bg-green-600 text-white p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <Link to="/" className="hover:bg-green-700 p-2 rounded-full">
+            <Link to="/profile/gig/673320037e07f2482a611526" className="hover:bg-green-700 p-2 rounded-full">
               <ChevronLeft size={24} />
             </Link>
             <h1 className="text-xl font-bold">RuralConnect Learning</h1>

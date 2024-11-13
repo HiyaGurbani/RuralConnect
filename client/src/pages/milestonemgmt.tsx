@@ -1,27 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import './milestone.css';
-import { useNavigate } from 'react-router-dom';
+import './milestonemgmt.css';
 
 declare let window: any;
 
 interface Milestone {
-  name: string;
-  deadline: string;
-  price: number;
+  id: number;
+  amount: number;
+  dueDate: string;
+  isCompleted: boolean;
+  isDisputed: boolean;
 }
 
-const Milestone: React.FC = () => {
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [milestoneCount, setMilestoneCount] = useState<number>(1);
+const milestonemgmt: React.FC = () => {
   const [web3, setWeb3] = useState<Web3 | null>(null);
   const [contract, setContract] = useState<any>(null);
   const [account, setAccount] = useState<string | null>(null);
-
-  const navigate = useNavigate();
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
 
   const contractAddress = '0x1924B5c37b9fCB0325295d09A3Aab84d7C4c11f3';
-  const contractABI =  [
+  const contractABI = [
     {
       "anonymous": false,
       "inputs": [
@@ -401,121 +399,72 @@ const Milestone: React.FC = () => {
   useEffect(() => {
     const loadWeb3AndContract = async () => {
       if (window.ethereum) {
-        try {
-          const web3Instance = new Web3(window.ethereum);
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const accounts = await web3Instance.eth.getAccounts();
-          setWeb3(web3Instance);
-          setAccount(accounts[0]);
+        const web3Instance = new Web3(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3Instance.eth.getAccounts();
+        setWeb3(web3Instance);
+        setAccount(accounts[0]);
 
-          const contractInstance = new web3Instance.eth.Contract(contractABI, contractAddress);
-          setContract(contractInstance);
-        } catch (error) {
-          console.error("Failed to load Web3 or contract:", error);
-        }
+        const contractInstance = new web3Instance.eth.Contract(contractABI, contractAddress);
+        setContract(contractInstance);
       } else {
         alert("Please install MetaMask to interact with the blockchain.");
       }
     };
+
     loadWeb3AndContract();
   }, []);
 
-  const handleMilestoneCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const count = parseInt(event.target.value);
-    setMilestoneCount(count);
-
-    const initialMilestones: Milestone[] = Array.from({ length: count }, () => ({
-      name: '',
-      deadline: '',
-      price: 0,
-    }));
-    setMilestones(initialMilestones);
-  };
-
-  const handleMilestoneChange = (index: number, field: keyof Milestone, value: string | number) => {
-    const updatedMilestones = [...milestones];
-    updatedMilestones[index] = { ...updatedMilestones[index], [field]: value };
-    setMilestones(updatedMilestones);
-  };
-
-  const renderMilestones = () => {
-    return milestones.map((milestone, index) => (
-      <div key={index} className="milestone-item">
-        <label>
-          Milestone {index + 1} Name:
-          <input
-            type="text"
-            value={milestone.name}
-            onChange={(e) => handleMilestoneChange(index, 'name', e.target.value)}
-          />
-        </label>
-        <label>
-          Deadline:
-          <input
-            type="date"
-            value={milestone.deadline}
-            onChange={(e) => handleMilestoneChange(index, 'deadline', e.target.value)}
-          />
-        </label>
-        <label>
-          Price (in Ether):
-          <input
-            type="number"
-            value={milestone.price}
-            onChange={(e) => handleMilestoneChange(index, 'price', parseFloat(e.target.value))}
-          />
-        </label>
-      </div>
-    ));
-  };
-
-  const handleSubmit = async () => {
-    if (!web3 || !contract || !account) {
-      alert("Web3 or contract is not loaded.");
-      return;
-    }
+  const fetchMilestones = async () => {
+    if (!contract || !account) return;
 
     try {
-      for (let milestone of milestones) {
-        const amountInWei = web3.utils.toWei(milestone.price.toString(), 'ether');
-        const dueDateTimestamp = Math.floor(new Date(milestone.deadline).getTime() / 1000);
+      const milestoneCount = await contract.methods.milestoneCount(account).call();
+      const fetchedMilestones: Milestone[] = [];
 
-        await contract.methods
-          .createMilestone(account, amountInWei, dueDateTimestamp)
-          .send({ from: account, value: amountInWei, gasPrice: await web3.eth.getGasPrice() });
+      for (let i = 0; i < milestoneCount; i++) {
+        const milestoneData = await contract.methods.milestones(account, i).call();
+        fetchedMilestones.push({
+          id: i,
+          amount: parseFloat(web3!.utils.fromWei(milestoneData.amount, 'ether')),
+          dueDate: new Date(milestoneData.dueDate * 1000).toLocaleDateString(),
+          isCompleted: milestoneData.isCompleted,
+          isDisputed: milestoneData.isDisputed,
+        });
       }
 
-      alert("Milestones created successfully on the blockchain.");
-      navigate('/dashboard/client/6734412f7e07f2482a61152a');
-    } catch (error: any) {
-      console.error("Error creating milestones on blockchain:", error);
-      if (error.code === 4001) { // MetaMask error code for user denied
-        alert("Transaction denied by user.");
-      } else {
-        alert("Failed to create milestones on blockchain.");
-      }
+      setMilestones(fetchedMilestones);
+    } catch (error) {
+      console.error("Error fetching milestones:", error);
     }
   };
 
+  useEffect(() => {
+    if (contract && account) {
+      fetchMilestones();
+    }
+  }, [contract, account]);
+
   return (
-    <div className="milestone-container">
-      <h2><strong>Milestone Setup</strong></h2>
-
-      <label>
-        Number of Milestones:
-        <input
-          type="number"
-          min="1"
-          value={milestoneCount}
-          onChange={handleMilestoneCountChange}
-        />
-      </label>
-
-      {renderMilestones()}
-
-      <button onClick={handleSubmit}>Save Milestones</button>
+    <div className="milestone-management">
+      <h2>Milestone Management</h2>
+      {milestones.length > 0 ? (
+        <div className="milestone-list">
+          {milestones.map((milestone) => (
+            <div key={milestone.id} className="milestone-item">
+              <p><strong>Milestone ID:</strong> {milestone.id}</p>
+              <p><strong>Amount:</strong> {milestone.amount} ETH</p>
+              <p><strong>Due Date:</strong> {milestone.dueDate}</p>
+              <p><strong>Completed:</strong> {milestone.isCompleted ? 'Yes' : 'No'}</p>
+              <p><strong>Disputed:</strong> {milestone.isDisputed ? 'Yes' : 'No'}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p>No milestones found.</p>
+      )}
     </div>
   );
 };
 
-export default Milestone;
+export default milestonemgmt;

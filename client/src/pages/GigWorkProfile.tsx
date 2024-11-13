@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Briefcase, DollarSign, Edit, Globe, Mail, MapPin, Phone, Plus, Save, Star, Wallet } from "lucide-react";
+import { Briefcase, DollarSign, Edit, Globe, Mail, MapPin, Phone, Plus, Save, Star, Wallet,LucideTreePine } from "lucide-react";
 import { ethers , BrowserProvider} from "ethers";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
@@ -25,7 +25,7 @@ export default function GigWorkerProfile() {
     phone: "+1 (555) 987-6543",
     website: "www.jatin.dev",
     bio: "Passionate full stack developer with 5+ years of experience. Specialized in React, Node.js, and cloud technologies. Always eager to take on new challenges and deliver high-quality solutions.",
-    skills: ["React", "Node.js", "TypeScript", "AWS", "GraphQL", "MongoDB"],
+    skills: ["Digital Payment, Tourist Organiser"],
     hourlyRate: "$75",
   });
   const [newSkill, setNewSkill] = useState({ name: "", proofOfWork: null });
@@ -508,6 +508,57 @@ export default function GigWorkerProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 to-cyan-50 p-6">
+    <header className="sticky top-0 z-50 w-full border-b bg-green-100/95 backdrop-blur supports-[backdrop-filter]:bg-green-100/60">
+      <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+        <div className="flex gap-6 md:gap-10">
+          <Link to="/" className="flex items-center space-x-2">
+            <LucideTreePine className="h-6 w-6 text-green-700" />
+            <span className="inline-block font-bold text-green-800">Rural Connect</span>
+          </Link>
+          <nav className="hidden md:flex gap-6">
+            <Link
+              to="/work"
+              className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
+            >
+              How It Works
+            </Link>
+            <Link
+              to="/markets"
+              className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
+            >
+              Marketplace
+            </Link>
+            <Link
+              to="/courses"
+              className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
+            >
+              Explore Courses
+            </Link>
+            <Link
+              to="/explore"
+              className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
+            >
+              Community
+            </Link>
+            <Link
+              to="/loan"
+              className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
+            >
+              GraminVittiya
+            </Link>
+          </nav>
+        </div>
+        <div className="flex flex-1 items-center justify-end space-x-4">
+          <nav className="flex items-center space-x-1">
+            <Button className="bg-green-600 hover:bg-green-700 text-white" size="sm">
+              <Link to="/">Logout</Link>
+            </Button>
+          </nav>
+        </div>
+      </div>
+    </header>
+    
+    
       <div className="max-w-3xl mx-auto">
         <Card>
           <CardHeader className="flex flex-col sm:flex-row items-center sm:items-start gap-4">

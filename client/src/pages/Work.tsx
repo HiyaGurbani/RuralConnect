@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, Store, ShoppingBag, Map, BookOpen, ArrowRight, Phone, Camera, Truck, CreditCard, Calendar, Award } from 'lucide-react';
+import { useNavigate } from 'react-router-dom'
 
 const HowItWorks = () => {
   const [selectedTab, setSelectedTab] = useState('seller');
@@ -10,6 +11,12 @@ const HowItWorks = () => {
     { id: 'guide', label: 'For Guides', icon: Map },
     { id: 'learner', label: 'For Learners', icon: BookOpen }
   ];
+
+  const navigate = useNavigate()
+
+  const handleBack = () => {
+    navigate('/'); 
+  };
 
   const processSteps = {
     seller: [
@@ -100,7 +107,7 @@ const HowItWorks = () => {
       <nav className="bg-green-600 text-white p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <button className="hover:bg-green-700 p-2 rounded-full">
+            <button className="hover:bg-green-700 p-2 rounded-full" onClick={handleBack}>
               <ChevronLeft size={24} />
             </button>
             <h1 className="text-xl font-bold">How It Works</h1>

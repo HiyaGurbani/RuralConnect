@@ -9,6 +9,7 @@ import { Search, Briefcase, DollarSign, Clock, MapPin } from 'lucide-react';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link, useParams } from 'react-router-dom'
 
 // Fallback mock data for jobs
 const fallbackJobs = [
@@ -49,9 +50,14 @@ export default function JobExplore() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 p-6">
+      
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Explore Jobs</h1>
-        
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">Explore Tours</h1>
+        <Link  to={`/profile/gig/673320037e07f2482a611526`}>
+          <Button>
+            View Profile
+          </Button>
+          </Link>
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-1/3">
             <Card className="mb-6">
@@ -60,7 +66,7 @@ export default function JobExplore() {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <Input
                     className="pl-10"
-                    placeholder="Search jobs, skills, or companies"
+                    placeholder="Search tours, location, or language"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -70,14 +76,14 @@ export default function JobExplore() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Job Listings</CardTitle>
+                <CardTitle>Listings Tours</CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="all" className="w-full">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="all">All</TabsTrigger>
-                    <TabsTrigger value="full-time">Full-time</TabsTrigger>
-                    <TabsTrigger value="contract">Contract</TabsTrigger>
+                    <TabsTrigger value="full-time">Family Tour</TabsTrigger>
+                    <TabsTrigger value="contract">Business Tour</TabsTrigger>
                   </TabsList>
                   <TabsContent value="all">
                     <JobList jobs={filteredJobs} onSelectJob={setSelectedJob} selectedJob={selectedJob} />
@@ -148,7 +154,7 @@ function JobList({ jobs, onSelectJob, selectedJob }) {
             transition={{ duration: 0.2 }}
           >
             <Card 
-              className={`cursor-pointer transition-all hover:shadow-md ${selectedJob.id === job.id ? 'border-indigo-500 shadow-md' : ''}`}
+              className={`cursor-pointer transition-all hover:shadow-md ${selectedJob.id === job.id ? 'border-green-500 shadow-md' : ''}`}
               onClick={() => onSelectJob(job)}
             >
               <CardContent className="p-4">
@@ -194,7 +200,7 @@ function JobPreview({ job }) {
             <span>{job.type}</span>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Required Skills</h4>
+            <h4 className="font-semibold mb-2">Locations</h4>
             <div className="flex flex-wrap gap-2">
               {job.skills.map((skill, index) => (
                 <Badge key={index} variant="outline">{skill}</Badge>
@@ -202,14 +208,14 @@ function JobPreview({ job }) {
             </div>
           </div>
           <div>
-            <h4 className="font-semibold mb-2">Job Description</h4>
+            <h4 className="font-semibold mb-2">Description</h4>
             <p className="text-gray-600">{job.description}</p>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={()=>{toast.success("Job saved successfully!");}}>Save Job</Button>
-                <Button onClick={()=>{toast.info("Application submitted!");}}>Apply Now</Button>
+                <Button variant="outline" onClick={()=>{toast.success("Job saved successfully!");}}>Save Trip</Button>
+                <Button onClick={()=>{toast.info("Application submitted!");}}>Accept Request</Button>
             </CardFooter>
             <ToastContainer />
     </Card>

@@ -6,6 +6,7 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
+
 # Initialize the Flask app and enable CORS
 app = Flask(__name__)
 CORS(app)
@@ -15,28 +16,33 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 model = genai.GenerativeModel("gemini-pro")
 
-# Instructions for freelancing-specific responses
+# Instructions for Rural Connect-specific responses
 context_instructions = (
-    "You are a freelancing assistant chatbot. Keep responses brief, accurate, and specific to freelancing, "
-    "job matching, and client requirements. For any unrelated query, reply with: "
-    "\"I'm here to assist with freelancing-related queries only.\" "
+    "You are an assistant chatbot for the Rural Connect platform, designed to empower rural communities through tourism. "
+    "Keep responses brief, accurate, and specific to context"
+    "You assist travelers in finding local guides, booking tours, learning about village products, and making transactions securely. "
+    "You also provide information about courses for both travelers and guides, including financial services like escrow transactions. "
+    "For any unrelated query, reply with: 'I'm here to assist with Rural related queries only.'"
 )
 
 @app.route('/generate', methods=['POST'])
 def generate_response():
     prompt = request.json.get('prompt', '')
+
+    # Generate response from the model based on the user's query
     response = model.generate_content(f"{context_instructions} User: {prompt}")
 
-    if response and any(keyword in response.text.lower() for keyword in ['hello', 'hi', 'freelance', 'freelancing', 'client', 'wages', 'salary']):
+    # Check if the response contains keywords related to the Rural Connect platform
+    if response and any(keyword.lower() in response.text.lower() for keyword in['hi','hello','hii','tourism', 'guide', 'village', 'product', 'course', 'payment', 'escrow', 'transaction']):
         formatted_response = {
             "response": response.text.strip()
         }
     else:
         formatted_response = {
-            "response": "I'm here to assist with freelancing-related queries only."
+            "response": "I'm here to assist with Rural related queries only."
         }
 
     return jsonify(formatted_response)
 
 if __name__ == '__main__':
-    app.run(debug=True,port=8000)
+    app.run(debug=True, port=8000)

@@ -1,10 +1,41 @@
+import { useEffect } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowRight, CheckCircle, MessageCircle, Shield, Star, Users, Map, Camera, Tent, TreePalm, LucideTreePine, Quote  } from "lucide-react"
+
+import { ArrowRight, MessageCircle, Star, Users, Map, Camera, Tent, LucideTreePine, Quote } from "lucide-react"
 import { Link } from "react-router-dom"
-import img1 from '../assets/img1.png'
-import doImage from '../assets/test.webp'
+// import img1 from '../assets/img1.png'
+// import doImage from '../assets/test.webp'
 import img2 from '../assets/mainny.png'
+
+// Google Translate Component
+const GoogleTranslate = () => {
+  useEffect(() => {
+    // Add Google Translate script
+    const addScript = () => {
+      const script = document.createElement('script');
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.body.appendChild(script);
+    };
+
+    // Initialize Google Translate
+    window.googleTranslateElementInit = () => {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: 'en',
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE
+        },
+        'google_translate_element'
+      );
+    };
+
+    addScript();
+  }, []);
+
+  return <div id="google_translate_element" className="px-4"  />;
+};
+
 
 export default function LandingPage1() {
   const testimonials = [
@@ -27,6 +58,7 @@ export default function LandingPage1() {
       location: "Montana"
     }
   ]
+    
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -37,6 +69,7 @@ export default function LandingPage1() {
               <LucideTreePine className="h-6 w-6 text-green-700" />
               <span className="inline-block font-bold text-green-800">Rural Connect</span>
             </Link>
+            
             <nav className="hidden md:flex gap-6">
               <Link
                 to="/work"
@@ -57,13 +90,13 @@ export default function LandingPage1() {
                 Explore Courses
               </Link>
               <Link
-                to="/explore"
+                to="/community"
                 className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
               >
                 Community
               </Link>
               <Link
-                to="#"
+                to="support"
                 className="flex items-center text-sm font-medium text-green-700 transition-colors hover:text-green-900"
               >
                 Support
@@ -72,6 +105,7 @@ export default function LandingPage1() {
           </div>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-1">
+            <GoogleTranslate />
               <Button className="bg-green-600 hover:bg-green-700 text-white" size="sm">
                 <Link to="/login">
                   Get Started
